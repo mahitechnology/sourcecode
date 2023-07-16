@@ -1,0 +1,171 @@
+database query:
+----------------
+
+Q1. How to write an SQL query to find the employee names start with 'M'?
+// select * from employee;
+sol, select * from employee where name like 'M%';
+output:
+1	Mary	101	55000 
+Q2. UPDATE table of column query?
+sol, update employee SET date of joining='15-12-205' wwhere id=1;
+
+Q3. write sql query to find all employee with salary between 55000 and 94300?
+ sol, select * from employee where salary between 55000 and 94300;
+Q4. sql query to select all employee name where age>30;
+ select * from employee where age>30;
+Q5. sql query to select all employee name where age<30;
+ select * from employee where age<30;
+Q6. Write sql query to fetch details of all employees excluding the employees with first name, "JOHN" and "Josphe"
+
+select * from employee where first_name like '%N';
+select * from employee where first_name like '___N';
+select * from employee where first_name like 'J___N';
+
+select * from employee where first_name!='John' and first name!='donald';
+select * from employee where first_name NOT IN('John','donald');
+Q7. write the sql query to display the current date?
+
+select sysdate,current_date,current_timestamp,systimestamp from dual;
+
+Q8. write a qsql query to get day of last day of the pervious month?
+sol, SELECT to_char(last_day( add_months(sysdate,-1)),'day') from dual;
+
+Q9. writw the sql query to fetch the employee first name and replace with the A with '@'
+sol, select replace(first_name,'J','@')from Employee;
+		
+//select email from employee;
+
+ Q10. write the sql query to fetch @ from email address?
+sol, select instr(email,'@') from employee;
+Q11. write the sql query to fetch domainname from email address?
+sol, select substr(email,instr(email,'@')+1) from employee;
+Q12. write sql query to update the employee names by removing leading and tralling space?
+sol, update employee SET first_name=RTRIM(LTRIM(first_name));
+Q13. write the sql query to fetch all the employee details from employee table who joined in the year 2020?
+
+sol, select * from employee where dateofjoining between '1-jan-2020' and '31-dec-2020';
+// to show all the employees date of joining
+sol, select dateofjoining from employee;
+Q14. write a sql query to fetch only even/ odd rows from the table?
+sol, select * from employee where MOD(id,2)=0;
+select * from employee where MOD(id,2)!=0;
+or
+select * from employee where MOD(id,2),<>0;
+Q15. write an sql query to create a new table with data and structurecopied from another table?
+sol, create table emp as(select * from employee);
+select * from emp;
+// this query to create only table but not copied the table data
+create table emp2 as(select * from employee where 1=2);
+select * from emp2;
+Q16. write a sql query to fetch only unique salary and sort in descinding order?
+sol, select distinct salary from employee order by salary desc/asc;
+
+write a sql query to fetch top 3 highest salary?
+sol, select * from (
+select distinct salary from employee order by salary desc) where Rownum<4;
+Q17. write a sql query for to fetch the min  id from employee table:
+sol, select MIN(id) from employee;
+Q18. write a sql query to fetch the min employee id details ?
+sol, select * from employee where id=(
+select MIN( id)from employee);
+Q19. write a sql query for to fetch the max  id from employee table:
+
+sol, select MAX(id) from employee; 
+
+Q(20). write a sql query to fetch the min employee id details ?
+sol, select * from employee where id=(
+select MAX( id)from employee);
+Q21. list the way to count the all rows of records in a table?
+sol, select COUNT( *) from employee;
+// this query to count the only manager_id it will not conseder null 
+select COUNT(manager_id) from employee;
+
+ 
+Q22. write a sql query to fetch the department wise count of employees sorted by departments count in ascending order?
+sol, //this query count group wise 
+select COUNT(*) from employee GROUP BY department;
+//this query will count department wise
+select department,COUNT(*) from employee GROUP BY department;
+Q23. write query to retrive department who have less than 2 employees working in it?
+sol, select department,COUNT(*) from employee HAVING COUNT (*)<2 GROUP BY department;
+Q24. write a sql query to retrive the department wise maximum salary?
+sol, select department, MAX(salary) from employee GROUP BY department;
+// use of JOIN statement:
+Q25. write sql query to employee earning maximum salry in his department?
+sol, 
+select * from employee E1 JOIN
+(select department, MAX(salary) salary from employee GROUP BY department)E2
+ON E1.department=E2.department AND E1.salary=E2.salary;
+
+Q26. write sql query to fetch the first 50% and 25% records from table?
+sol, select * from employee where Rownum<=
+(select COUNt(*) from employee)/2; 
+
+sol, select * from employee where Rownum<=
+(select COUNt(*) from employee)/4; 
+27. quary to fetch details of employees along with the computer details who have been assigned with a computer?
+sol, select * from employee JOIN computer on employee.comp_id=computer.comp_id;
+//using alis name or nick name
+select * from employee E JOIN computer C on E.comp_id=C.comp_id;
+
+Q28. write a query to fetch details of employees not having computer?
+sol, select * from employee E where comp_id is NOT null;
+
+Q29. fetch all employee details along with the computer named assigned to them?
+sol, // use of LEFT JOIN and NVL function:
+-- this query show the all details of employee table  and computer table but computer table it will show null value
+select * from employee E LEFT JOIN computer C ON E.comp_id=C.comp_id;
+
+-- this query show the first name and brandno from employee - computer table
+        select first_name,C.brandno from employee E LEFT JOIN computer C ON E.comp_id=C.comp_id;
+        
+-- this query show the first name brandno and also to assign null values to Not Assigned value in computer table
+        select first_name,NVL(C.brandno,'NOT ASSIGNED') from employee E LEFT JOIN computer C ON E.comp_id=C.comp_id;
+
+Q30. Fetch all computer details along with employee name using it?
+sol, //use of RIGHT JOIN:
+
+-- this query show the all details of employee table  and computer table but employee table it will show null value
+select * from employee E RIGHT JOIN computer C ON E.comp_id=C.comp_id;
+
+-- this query show the first name and brandno from computer - employee table
+        select first_name,C.brandno from employee E RIGHT JOIN computer C ON E.comp_id=C.comp_id;
+        
+-- this query show the first name brandno and also to assign null values to Not Assigned value to employee table
+        select first_name,NVL(C.brandno,'NOT ASSIGNED') from employee E RIGHT JOIN computer C ON E.comp_id=C.comp_id;
+Q31. Delete duplicate records from table?
+sol, SELF JOIN:
+DELETE from DUPLICATE where emp_id in(
+select D1.emp_id from DUPLICATE D1 JOIN DUPLICATE D2 ON D1.first_name=D2.first_name
+	AND D1.last_name=D2.last_name AND D1.salary=D2.salary 
+		AND D1.manager_id=D2.manager_id AND D1.dateofjoining=D2.dateofjoining AND D1.emp_id>D2.emp_id);
+Q32. To find the Nth Highest salary?
+sol, select E1.salary,COUNT(DISTINCT E2.salary) 
+    from employee E1 JOIN employee E2 ON E1.salary<=E2.salary 
+        GROUP BY E1.salary HAVING COUNT(DISTINCT E2.salary)=3;
+
+
+
+Q33. Use the below syntax for querying for all students with greater marks than the average of the class:
+
+Syntax:
+SELECT column1 FROM table_name
+WHERE column2 > (SELECT AVG(column2) FROM table_name);
+Now use the above syntax to make the query on our students table as shown below:
+
+SELECT Name FROM Students WHERE TotalMarks > (SELECT AVG(TotalMarks) FROM Students); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
